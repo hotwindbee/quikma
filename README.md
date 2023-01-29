@@ -1,5 +1,6 @@
 # quikma
 A simple quick set trojan for self.
+
 Only on Debian, especially Debian 11.
 
 ```
