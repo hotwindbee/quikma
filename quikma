@@ -24,7 +24,7 @@ function issueCert() {
 }
 function insCert() {
     rm -rf /usr/quikmaCert && mkdir -p /usr/quikmaCert
-    ./.acme.sh/acme.sh --installcert -d $domain --fullchainpath /usr/quikma/fullchain.cer --keypath /usr/quikma/private.key --ecc
+    ./.acme.sh/acme.sh --installcert -d $domain --fullchainpath /usr/quikmaCert/fullchain.cer --keypath /usr/quikmaCert/private.key --ecc
     ./.acme.sh/acme.sh --upgrade --auto-upgrade
 }
 function begin() {
