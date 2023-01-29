@@ -23,8 +23,8 @@ function issueCert() {
     ./.acme.sh/acme.sh --issue --dns dns_cf -d $domain -k ec-256
 }
 function insCert() {
-    mkdir /usr/mycert
-    ./.acme.sh/acme.sh --installcert -d $domain --fullchainpath /usr/mycert/fullchain.cer --keypath /usr/mycert/private.key --ecc
+    rm -rf /usr/quikmaCert && mkdir /usr/quikmaCert
+    ./.acme.sh/acme.sh --installcert -d $domain --fullchainpath /usr/quikma/fullchain.cer --keypath /usr/quikma/private.key --ecc
     ./.acme.sh/acme.sh --upgrade --auto-upgrade
 }
 function begin() {
