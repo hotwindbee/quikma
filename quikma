@@ -17,7 +17,7 @@ function epEmail() {
     export CF_Email="$cfmail"
 }
 function epKey() {
-    read -p "請輸入CloudFlarem密鑰/Please enter Cloudflare Global_Key：" apikey
+    read -p "請輸入CloudFlare密鑰/Please enter Cloudflare Global_Key：" apikey
     export CF_Key="$apikey"
 }
 function issueCert() {
