@@ -40,8 +40,8 @@ function randomPassword() {
 }
 function insTrojan() {
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/trojan-gfw/trojan-quickstart/master/trojan-quickstart.sh)"
-    sed -i '8d' /usr/local/etc/trojan/config.json
     sed -i "8s/.*/\t\t\"$(randomPassword)\"/" /usr/local/etc/trojan/config.json
+    sed -i "9s/.*/\t\t\"$(randomPassword)\"/" /usr/local/etc/trojan/config.json
     sed -i "4s/\"local_port\": [0-9].*/\"local_port\": $(randomPort),/" /usr/local/etc/trojan/config.json
     sed -i 's/\/path\/to\/certificate.crt/\/usr\/quikmaCert\/fullchain.cer/' /usr/local/etc/trojan/config.json
     sed -i 's/\/path\/to\/private.key/\/usr\/quikmaCert\/private.key/' /usr/local/etc/trojan/config.json
@@ -75,3 +75,4 @@ setRestartTrojan
 ln -s /usr/local/etc/trojan/config.json ~/trojan_config
 head -n 10 ~/trojan_config
 echo "已完成/Finished。請根据需要修改端口與密碼/Please modify the port and password。"
+rm $0
