@@ -15,8 +15,8 @@ function insAcme() {
 }
 function epEmail() {
     echo "請輸入CloudFlare郵箱/Please enter CloudFlare Account："
-    read acmeEmail
-    export CF_Email="$acmeEmail"
+    read cfmail
+    export CF_Email="$cfmail"
 }
 function epKey() {
     echo "請輸入CloudFlarem密鑰/Please enter Cloudflare Global_Key："
