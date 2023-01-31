@@ -7,17 +7,20 @@ function need() {
     apt update && apt install $n1 -y
 }
 function insAcme() {
-    read -p "請輸入郵箱/Please enter Email：" acmeEmail
+    echo "請輸入郵箱/Please enter Email：" 
+    read acmeEmail
     curl https://get.acme.sh | sh -s email=$acmeEmail
     source ./.bashrc
     ./.acme.sh/acme.sh --set-default-ca --server letsencrypt
 }
 function epEmail() {
-    read -p "請輸入CloudFlare郵箱/Please enter CloudFlare Account：" cfmail
+    echo "請輸入CloudFlare郵箱/Please enter CloudFlare Account："
+    read acmeEmail
     export CF_Email="$cfmail"
 }
 function epKey() {
-    read -p "請輸入CloudFlare密鑰/Please enter Cloudflare Global_Key：" apikey
+    echo "請輸入CloudFlarem密鑰/Please enter Cloudflare Global_Key："
+    read apikey
     export CF_Key="$apikey"
 }
 function issueCert() {
@@ -29,13 +32,19 @@ function insCert() {
     ./.acme.sh/acme.sh --installcert -d $domain --fullchainpath /usr/quikmaCert/fullchain.cer --keypath /usr/quikmaCert/private.key --ecc
     ./.acme.sh/acme.sh --upgrade --auto-upgrade
 }
+function randomPort() {
+    shuf -i 15619-61524 -n 1
+}
+function randomPassword() {
+    tr -dc A-Za-z0-9 </dev/urandom | head -c 12 ; echo ''
+}
 function insTrojan() {
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/trojan-gfw/trojan-quickstart/master/trojan-quickstart.sh)"
     sed -i '8d' /usr/local/etc/trojan/config.json
-    sed -i "s/password2/wesztghd1rd9/" /usr/local/etc/trojan/config.json
+    sed -i "8s/.*/\t\t\"$(randomPassword)\"/" /usr/local/etc/trojan/config.json
+    sed -i "4s/\"local_port\": [0-9].*/\"local_port\": $(randomPort),/" /usr/local/etc/trojan/config.json
     sed -i 's/\/path\/to\/certificate.crt/\/usr\/quikmaCert\/fullchain.cer/' /usr/local/etc/trojan/config.json
     sed -i 's/\/path\/to\/private.key/\/usr\/quikmaCert\/private.key/' /usr/local/etc/trojan/config.json
-    sed -i 's/443/33333/' /usr/local/etc/trojan/config.json
 }
 function begin() {
     systemctl enable trojan
@@ -47,6 +56,11 @@ function bbr() {
     echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
     sysctl -p
     sysctl net.ipv4.tcp_available_congestion_control
+    echo "已啟用BBR/BBR has been enabled。"
+}
+function setRestartTrojan() {
+    (echo "0 6 * * * systemctl restart trojan" ; crontab -l)| crontab 
+    echo "已設置每日6點重啟trojan/Trojan has been set to restart at 6:00 every day。"
 }
 need
 insAcme
@@ -57,5 +71,7 @@ insCert
 insTrojan
 begin
 bbr
+setRestartTrojan
 ln -s /usr/local/etc/trojan/config.json ~/trojan_config
-echo "已完成。請修改端口與密碼。Please modify the port and password."
+head -n 10 ~/trojan_config
+echo "已完成/Finished。請根据需要修改端口與密碼/Please modify the port and password。"
