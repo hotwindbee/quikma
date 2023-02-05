@@ -30,7 +30,7 @@ function epEmail() {
     while true; do
         echo "請輸入CloudFlare郵箱/Please enter CloudFlare Account："
         read cfmail
-        if [[$cfmail =~ $email_pattern]]; then
+        if [[ $cfmail =~ $email_pattern ]]; then
             echo -e "你的郵箱是/Email：\033[34m $cfmail \033[0m"
             read -p "確認郵箱/Confirm CF_email (y/n)? " confirm
             if [[$confirm == "y"]]; then
