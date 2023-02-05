@@ -6,7 +6,7 @@ function need() {
     n1="curl xz-utils net-tools"
     apt update && apt install $n1 -y
 }
-insAcme() {
+function insAcme() {
     local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     while true; do
     echo "請輸入你的郵箱/Please enter Email："
@@ -26,11 +26,11 @@ insAcme() {
 }
 
 function epEmail() {
-    local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-z0-9.-]+\.[a-zA-Z]{2,}$"
+    local cfemail_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-z0-9.-]+\.[a-zA-Z]{2,}$"
     while true; do
         echo "請輸入CloudFlare郵箱/Please enter CloudFlare Account："
         read cfmail
-        if [[ $cfmail =~ $email_pattern ]]; then
+        if [[ $cfmail =~ $cfemail_pattern ]]; then
             echo -e "你的郵箱是/Email：\033[34m $cfmail \033[0m"
             read -p "確認郵箱/Confirm CF_email (y/n)? " confirm
             if [[ $confirm == "y" ]]; then
