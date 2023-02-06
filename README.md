@@ -1,7 +1,7 @@
 # quikma
 A simple quick set trojan for self.
 
-Only on Debian with Root permissions, especially Debian 11.在Debian上以root权限
+Only on Debian with Root permissions, especially Debian 11.
 
 ```
 wget https://raw.githubusercontent.com/hotwindbee/quikma/main/quikma && chmod +x ./quikma && ./quikma
