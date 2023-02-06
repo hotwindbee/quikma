@@ -73,8 +73,8 @@ function issueCert() {
             for domain in "${domains[@]}"; do
                 domains_args="$domains_args -d $domain"
             done
-            ./.acme.sh/acme.sh --set-default-ca --server letsencrypt
-            ./.acme.sh/acme.sh --issue --dns dns_cf $domains_args -k ec-256
+            /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+            /root/.acme.sh/acme.sh --issue --dns dns_cf $domains_args -k ec-256
             break
         fi
         echo -e "\033[31m 请重新输入域名。Please re-enter domain(s). \033[0m"
@@ -83,8 +83,8 @@ function issueCert() {
 
 function insCert() {
     rm -rf /usr/quikmaCert && mkdir -p /usr/quikmaCert
-    ./.acme.sh/acme.sh --installcert $domains_args --fullchainpath /usr/quikmaCert/fullchain.cer --keypath /usr/quikmaCert/private.key --ecc
-    ./.acme.sh/acme.sh --upgrade --auto-upgrade
+    /root/.acme.sh/acme.sh --installcert $domains_args --fullchainpath /usr/quikmaCert/fullchain.cer --keypath /usr/quikmaCert/private.key --ecc
+    /root/.acme.sh/acme.sh --upgrade --auto-upgrade
 }
 
 function randomPort() {
