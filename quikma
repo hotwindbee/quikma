@@ -2,50 +2,108 @@
 # author:hotwindbee
 # A simple quick set trojan for self.
 # Less is More. —— Ludwig Mies van der Rohe
+domains_args=""
 function need() {
     n1="curl xz-utils net-tools"
     apt update && apt install $n1 -y
 }
 function insAcme() {
-    echo "請輸入郵箱/Please enter Email：" 
+    local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    while true; do
+    echo "請輸入你的郵箱/Please enter Email："
     read acmeEmail
-    curl https://get.acme.sh | sh -s email=$acmeEmail
-    source ./.bashrc
-    ./.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    if [[ $acmeEmail =~ $email_pattern ]]; then
+      echo -e "你的郵箱是/Email：\033[34m $acmeEmail \033[0m"
+      read -p "確認郵箱/Confirm email (y/n)? :" confirm
+      if [[ $confirm == "y" ]]; then
+        curl https://get.acme.sh | sh -s email=$acmeEmail
+        break
+      fi
+    else
+      echo -e "\033[31m 無效郵箱，請重新輸入。Invalid email. Please input a valid email. \033[0m"
+    fi
+   done
 }
+
 function epEmail() {
-    echo "請輸入CloudFlare郵箱/Please enter CloudFlare Account："
-    read cfmail
-    export CF_Email="$cfmail"
+    local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    while true; do
+    echo "請輸入你的CloudFlare郵箱/Please enter CloudFlare Account："
+    read cfMail
+    if [[ $cfMail =~ $email_pattern ]]; then
+      echo -e "你的郵箱CF_Mail/CF_Email：\033[34m $cfMail \033[0m"
+      read -p "確認郵箱CF_Mail/Confirm CF_Email (y/n)? :" confirm
+      if [[ $confirm == "y" ]]; then
+        export CF_Email="$cfMail"
+        break
+      fi
+    else
+      echo -e "\033[31m 無效郵箱，請重新輸入。Invalid email. Please input a valid email. \033[0m"
+    fi
+   done
 }
+
 function epKey() {
-    echo "請輸入CloudFlarem密鑰/Please enter Cloudflare Global_Key："
+    local key_pattern="^[a-zA-Z0-9]+$"
+    while true; do
+    echo "请輸入CloudFlarem密鑰/Please enter Cloudflare Global_Key："
     read apikey
-    export CF_Key="$apikey"
+    if [[ apikey =~ $key_pattern ]]; then
+      echo -e "你的密鑰是/Your key：\033[34m $apikey \033[0m"
+      read -p "確認/Confirm CF_key (y/n)? :" confirm
+      if [[ $confirm == "y" ]]; then
+        export CF_Key="$apikey"
+        break
+      fi
+    else
+      echo -e "\033[31m 密鑰無效，請重新輸入。Invalid key. Please input a valid key. \033[0m"
+    fi
+  done
 }
+
 function issueCert() {
-    read -p "請要輸入申請證書的域名/Please enter domain which you want issue cert：" domain
-    ./.acme.sh/acme.sh --issue --dns dns_cf -d $domain -k ec-256
+    while true; do
+        echo "请输入域名/Please enter domain(s)："
+        read -a domains
+        echo -e "你的域名/Your domain(s)：\033[34m ${domains[@]} \033[0m"
+        read -p "确认以继续/Confirm (y/n)? :" confirm
+        if [[ "$(echo "$confirm" | tr '[:upper:]' '[:lower:]')" == "y" ]]; then
+            echo "已确认，即将申请证书。Confirmed, the certificate will be applied for soon."
+            domains_args=""
+            for domain in "${domains[@]}"; do
+                domains_args="$domains_args -d $domain"
+            done
+            ./.acme.sh/acme.sh --set-default-ca --server letsencrypt
+            ./.acme.sh/acme.sh --issue --dns dns_cf $domains_args -k ec-256
+            break
+        fi
+        echo -e "\033[31m 请重新输入域名。Please re-enter domain(s). \033[0m"
+    done
 }
+
 function insCert() {
     rm -rf /usr/quikmaCert && mkdir -p /usr/quikmaCert
-    ./.acme.sh/acme.sh --installcert -d $domain --fullchainpath /usr/quikmaCert/fullchain.cer --keypath /usr/quikmaCert/private.key --ecc
+    ./.acme.sh/acme.sh --installcert $domains_args --fullchainpath /usr/quikmaCert/fullchain.cer --keypath /usr/quikmaCert/private.key --ecc
     ./.acme.sh/acme.sh --upgrade --auto-upgrade
 }
+
 function randomPort() {
     shuf -i 15619-61524 -n 1
 }
+
 function randomPassword() {
     tr -dc A-Za-z0-9 </dev/urandom | head -c 12 ; echo ''
 }
+
 function insTrojan() {
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/trojan-gfw/trojan-quickstart/master/trojan-quickstart.sh)"
-    sed -i "8s/.*/\t\t\"$(randomPassword)\",/" /usr/local/etc/trojan/config.json
-    sed -i "9s/.*/\t\t\"$(randomPassword)\"/" /usr/local/etc/trojan/config.json
-    sed -i "4s/\"local_port\": [0-9].*/\"local_port\": $(randomPort),/" /usr/local/etc/trojan/config.json
+    sed -i '4s/.*/    "local_port": '$(randomPort)',/' /usr/local/etc/trojan/config.json
+    sed -i '8s/.*/\t\t"'$(randomPassword)'",/' /usr/local/etc/trojan/config.json
+    sed -i '9s/.*/\t\t"'$(randomPassword)'"/' /usr/local/etc/trojan/config.json
     sed -i 's/\/path\/to\/certificate.crt/\/usr\/quikmaCert\/fullchain.cer/' /usr/local/etc/trojan/config.json
     sed -i 's/\/path\/to\/private.key/\/usr\/quikmaCert\/private.key/' /usr/local/etc/trojan/config.json
 }
+
 function begin() {
     systemctl enable trojan
     systemctl restart trojan
@@ -60,7 +118,7 @@ function bbr() {
 }
 function setRestartTrojan() {
     (echo "0 6 * * * systemctl restart trojan" ; crontab -l)| crontab 
-    echo "已設置每日6點重啟trojan/Trojan has been set to restart at 6:00 every day。"
+    echo "已設置每日6點重啟trojan。Trojan has been set to restart at 6:00 every day。"
 }
 need
 insAcme
@@ -70,9 +128,9 @@ issueCert
 insCert
 insTrojan
 begin
-bbr
 setRestartTrojan
+bbr
 ln -s /usr/local/etc/trojan/config.json ~/trojan_config
 head -n 10 ~/trojan_config
-echo "已完成/Finished。請根据需要修改端口與密碼/Please modify the port and password。"
+echo "已完成/Finished。請根据需要修改端口與密碼/Please modify the port and password."
 rm $0
