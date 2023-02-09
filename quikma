@@ -24,7 +24,6 @@ function insAcme() {
     fi
    done
 }
-
 function epEmail() {
     local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     while true; do
@@ -133,6 +132,5 @@ bbr
 ln -s /usr/local/etc/trojan/config.json ~/trojan_config
 head -n 10 ~/trojan_config
 echo -e "\033[36m 已完成/Finished。請根据需要修改端口與密碼/Please modify the port and password. 
-配置位置/Config location：/usr/local/etc/trojan/config.json ~/trojan_config
-\033[0m"
+配置位置/Config location：/usr/local/etc/trojan/config.json ，~/trojan_config \033[0m"
 rm $0
