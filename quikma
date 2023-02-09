@@ -66,8 +66,8 @@ function issueCert() {
         echo "请输入域名/Please enter domain(s)："
         read -a domains
         echo -e "你的域名/Your domain(s)：\033[34m ${domains[@]} \033[0m"
-        read -p "确认以继续/Confirm (y/n)? :" confirm
-        if [[ "$(echo "$confirm" | tr '[:upper:]' '[:lower:]')" == "y" ]]; then
+        read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
+        if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
             echo "已确认，即将申请证书。Confirmed, the certificate will be applied for soon."
             domains_args=""
             for domain in "${domains[@]}"; do
