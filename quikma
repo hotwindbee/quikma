@@ -13,9 +13,9 @@ function insAcme() {
     echo "請輸入你的郵箱/Please enter Email："
     read acmeEmail
     if [[ $acmeEmail =~ $email_pattern ]]; then
-      echo -e "你的郵箱是/Email：\033[34m $acmeEmail \033[0m"
-      read -p "確認郵箱/Confirm email (y/n)? :" confirm
-      if [[ $confirm == "y" ]]; then
+      echo -e "你的郵箱是/Your Email：\033[34m $acmeEmail \033[0m"
+      read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
+      if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
         curl https://get.acme.sh | sh -s email=$acmeEmail
         break
       fi
@@ -31,9 +31,9 @@ function epEmail() {
     echo "請輸入你的CloudFlare郵箱/Please enter CloudFlare Account："
     read cfMail
     if [[ $cfMail =~ $email_pattern ]]; then
-      echo -e "你的郵箱CF_Mail/CF_Email：\033[34m $cfMail \033[0m"
-      read -p "確認郵箱CF_Mail/Confirm CF_Email (y/n)? :" confirm
-      if [[ $confirm == "y" ]]; then
+      echo -e "你的郵箱CF_Mail/Your CF_Email：\033[34m $cfMail \033[0m"
+      read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
+      if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
         export CF_Email="$cfMail"
         break
       fi
@@ -50,8 +50,8 @@ function epKey() {
     read apikey
     if [[ apikey =~ $key_pattern ]]; then
       echo -e "你的密鑰是/Your key：\033[34m $apikey \033[0m"
-      read -p "確認/Confirm CF_key (y/n)? :" confirm
-      if [[ $confirm == "y" ]]; then
+      read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
+      if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
         export CF_Key="$apikey"
         break
       fi
