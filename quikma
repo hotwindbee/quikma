@@ -46,7 +46,7 @@ function epEmail() {
 function epKey() {
     local key_pattern="^[a-zA-Z0-9]+$"
     while true; do
-    echo "请輸入CloudFlarem密鑰/Please enter Cloudflare Global_Key："
+    echo "请輸入CloudFlare密鑰/Please enter Cloudflare Global_Key："
     read apikey
     if [[ apikey =~ $key_pattern ]]; then
       echo -e "你的密鑰是/Your key：\033[34m $apikey \033[0m"
