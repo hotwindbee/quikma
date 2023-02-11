@@ -2,9 +2,12 @@
 # author:hotwindbee
 # A simple quick set trojan for self.
 # Less is More. —— Ludwig Mies van der Rohe
-domains_args=""
+# domains_args=""
+# port_use=""
+# password1=""
+# password2=""
 function need() {
-    n1="curl xz-utils net-tools"
+    n1="curl xz-utils"
     apt update && apt install $n1 -y
 }
 function insAcme() {
@@ -41,6 +44,7 @@ function epEmail() {
     fi
    done
 }
+
 function epKey() {
     local key_pattern="^[a-zA-Z0-9]+$"
     while true; do
@@ -58,59 +62,104 @@ function epKey() {
     fi
   done
 }
+
 function issueCert() {
-    while true; do
-        echo "请输入域名/Please enter domain(s)："
-        read -a domains
-        echo -e "你的域名/Your domain(s)：\033[34m ${domains[@]} \033[0m"
-        read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
-        if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
-            echo "已确认，即将申请证书。Confirmed, the certificate will be applied for soon."
-            domains_args=""
-            for domain in "${domains[@]}"; do
-                domains_args="$domains_args -d $domain"
-            done
-            /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-            /root/.acme.sh/acme.sh --issue --dns dns_cf $domains_args -k ec-256
-            break
-        fi
-        echo -e "\033[31m 请重新输入域名。Please re-enter domain(s). \033[0m"
+  local domain_pattern="^([a-zA-Z0-9]+\.)+[a-zA-Z0-9]{2,}|\*\.[a-zA-Z0-9]+$"
+  while true; do
+  echo "请输入域名/Please enter domain(s)："
+  read -a domains
+    for domain in "${domains[@]}"; do
+      if ![[ domain =~ domain_pattern ]]; then
+      echo -e "\033[31m 输入的域名無效，请重新输入。The entered domain is invalid, please re-enter. \033[0m"
+      continue 2
+      fi
     done
+  echo -e "你的域名/Your domain(s)：\033[34m ${domains[@]} \033[0m"
+  read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
+    if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
+      echo "已确认，即将申请证书。Confirmed, the certificate will be applied for soon."
+      domains_args=""
+      for domain in "${domains[@]}"; do
+      domains_args="$domains_args -d $domain"
+      done
+      /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+      /root/.acme.sh/acme.sh --issue --dns dns_cf $domains_args -k ec-256
+      break
+    fi
+  echo -e "\033[31m 请重新输入域名。Please re-enter domain(s). \033[0m"
+  done
 }
+
+function issueCert() {
+  local domain_pattern="^(\*\.[a-zA-Z0-9]+|[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*\.[a-zA-Z]{2,})"
+  while true; do
+    echo "请输入域名/Please enter domain(s)："
+    read -a domains
+    local domains_valid=true
+    for domain in "${domains[@]}"; do
+      if [[ ! $domain =~ $domain_pattern ]]; then
+        echo -e "\033[31m请重新输入域名。Please re-enter domain(s). \033[0m"
+        domains_valid=false
+        break
+      fi
+    done
+    if $domains_valid; then
+      echo -e "你的域名/Your domain(s)：\033[34m ${domains[@]} \033[0m"
+      read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
+      if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
+        echo "已确认，即将申请证书。Confirmed, the certificate will be applied for soon."
+        domains_args=""
+        for domain in "${domains[@]}"; do
+          domains_args="$domains_args -d $domain"
+        done
+        /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+        /root/.acme.sh/acme.sh --issue --dns dns_cf $domains_args -k ec-256
+        break
+      fi
+    fi
+  done
+}
+
 function insCert() {
-    rm -rf /usr/myCert && mkdir -p /usr/myCert
-    /root/.acme.sh/acme.sh --installcert $domains_args --fullchainpath /usr/myCert/fullchain.cer --keypath /usr/myCert/private.key --ecc
-    /root/.acme.sh/acme.sh --upgrade --auto-upgrade
+  rm -rf /usr/myCert && mkdir -p /usr/myCert
+  /root/.acme.sh/acme.sh --installcert $domains_args --fullchainpath /usr/myCert/fullchain.cer --keypath /usr/myCert/private.key --ecc
+  /root/.acme.sh/acme.sh --upgrade --auto-upgrade
 }
+
 function randomPort() {
-    shuf -i 15619-61524 -n 1
+  shuf -i 15619-61524 -n 1
 }
 
 function randomPassword() {
-    tr -dc A-Za-z0-9 </dev/urandom | head -c 12 ; echo ''
+  tr -dc A-Za-z0-9 </dev/urandom | head -c 12 ; echo ''
 }
+
 function insTrojan() {
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/trojan-gfw/trojan-quickstart/master/trojan-quickstart.sh)"
-    sed -i '4s/.*/    "local_port": '$(randomPort)',/' /usr/local/etc/trojan/config.json
-    sed -i '8s/.*/\t\t"'$(randomPassword)'",/' /usr/local/etc/trojan/config.json
-    sed -i '9s/.*/\t\t"'$(randomPassword)'"/' /usr/local/etc/trojan/config.json
-    sed -i 's/\/path\/to\/certificate.crt/\/usr\/myCert\/fullchain.cer/' /usr/local/etc/trojan/config.json
-    sed -i 's/\/path\/to\/private.key/\/usr\/myCert\/private.key/' /usr/local/etc/trojan/config.json
+  port_use=$(randomPort)
+  password1=$(randomPassword)
+  password2=$(randomPassword)
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/trojan-gfw/trojan-quickstart/master/trojan-quickstart.sh)"
+  sed -i '4s/.*/    "local_port": '$port_use',/' /usr/local/etc/trojan/config.json
+  sed -i '8s/.*/\t\t"'$password1'",/' /usr/local/etc/trojan/config.json
+  sed -i '9s/.*/\t\t"'$password2'"/' /usr/local/etc/trojan/config.json
+  sed -i 's/\/path\/to\/certificate.crt/\/usr\/myCert\/fullchain.cer/' /usr/local/etc/trojan/config.json
+  sed -i 's/\/path\/to\/private.key/\/usr\/myCert\/private.key/' /usr/local/etc/trojan/config.json
 }
 function begin() {
-    systemctl enable trojan
-    systemctl restart trojan
+  systemctl enable trojan
+  systemctl restart trojan
 }
+
 function bbr() {
-    echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
-    echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
-    sysctl -p
-    sysctl net.ipv4.tcp_available_congestion_control
-    echo -e "\033[36m 已啟用BBR/BBR has been enabled。 \033[0m"
+  echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+  echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+  sysctl -p
+  sysctl net.ipv4.tcp_available_congestion_control
+  echo -e "\033[36m 已啟用BBR/BBR has been enabled。 \033[0m"
 }
 function setRestartTrojan() {
-    (echo "0 6 * * * systemctl restart trojan" ; crontab -l)| crontab 
-    echo -e "\033[36m 已設置每日6點重啟trojan。Trojan has been set to restart at 6:00 every day。 \033[0m"
+  (echo "0 6 * * * systemctl restart trojan" ; crontab -l)| crontab 
+  echo -e "\033[36m 已設置每日6點重啟trojan。Trojan has been set to restart at 6:00 every day。 \033[0m"
 }
 need
 insAcme
@@ -123,8 +172,14 @@ begin
 setRestartTrojan
 bbr
 ln -s /usr/local/etc/trojan/config.json ~/trojan_config
-head -n 10 ~/trojan_config
+# head -n 10 ~/trojan_config
+# echo `head -n 10 ~/trojan_config`显示命令执行结果。
 echo -e "\033[36m 已完成/Finished。請根据需要修改端口與密碼/Please modify the port and password. 
+ 可用於trojan的域名/domain names available for trojan：
+ ${domains[@]}
+ trojans使用的端口/trojan use Port：$port_use
+ trojan使用的密碼/trojan password：$password1 ，$password2
  證書位置/Certificate location ：/usr/myCert
- 配置位置/Config location ：/usr/local/etc/trojan/config.json ，~/trojan_config \033[0m"
+ 配置位置/Config location ：/usr/local/etc/trojan/config.json ，~/trojan_config
+ 本消息位置/The location of this message：/root/trojan_config.txt \033[0m" | tee trojan_config.txt
 rm $0
