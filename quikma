@@ -177,7 +177,7 @@ ln -s /usr/local/etc/trojan/config.json ~/trojan_config
 echo -e "\033[36m 已完成/Finished。請根据需要修改端口與密碼/Please modify the port and password. 
  可用於trojan的域名/domain names available for trojan：
  ${domains[@]}
- trojans使用的端口/trojan use Port：$port_use
+ trojan使用的端口/trojan use Port：$port_use
  trojan使用的密碼/trojan password：$password1 ，$password2
  證書位置/Certificate location ：/usr/myCert
  配置位置/Config location ：/usr/local/etc/trojan/config.json ，~/trojan_config
