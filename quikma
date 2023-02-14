@@ -10,6 +10,7 @@ function need() {
     n1="curl xz-utils"
     apt update && apt install $n1 -y
 }
+
 function insAcme() {
     local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     while true; do
@@ -27,6 +28,7 @@ function insAcme() {
     fi
    done
 }
+
 function epEmail() {
     local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     while true; do
