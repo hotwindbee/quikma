@@ -13,6 +13,7 @@ script_name=$(basename "$0")
 if [ -f "$script_name" ]; then
   echo "Script with the same name already exists, deleting it..."
   rm "$script_name"
+  rm "${script_name}.*"
 fi
 
 function need() {
