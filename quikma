@@ -121,10 +121,13 @@ function issueCert() {
 }
 
 function insCert() {
-  rm -rf /usr/myCert && mkdir -p /usr/myCert
+  if [ ! -d "/usr/myCert" ]; then
+    mkdir -p /usr/myCert
+  fi
   /root/.acme.sh/acme.sh --installcert $domains_args --fullchainpath /usr/myCert/fullchain.cer --keypath /usr/myCert/private.key --ecc
   /root/.acme.sh/acme.sh --upgrade --auto-upgrade
 }
+
 
 function randomPort() {
   shuf -i 15619-61524 -n 1
