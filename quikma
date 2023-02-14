@@ -43,7 +43,7 @@ function epEmail() {
     echo "請輸入你的CloudFlare郵箱/Please enter CloudFlare Account："
     read cfMail
     if [[ $cfMail =~ $email_pattern ]]; then
-      echo -e "你的郵箱CF_Mail/Your CF_Email：\033[34m $cfMail \033[0m"
+      echo -e "你的郵箱CloudFlare郵箱/Your CloudFlare Account：\033[34m $cfMail \033[0m"
       read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
       if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
         export CF_Email="$cfMail"
