@@ -6,15 +6,6 @@
 # port_use=""
 # password1=""
 # password2=""
-# Get the name of the current script
-script_name=$(basename "$0")
-
-# Check if a script with the same name exists
-if [ -f "$script_name" ]; then
-  echo "Script with the same name already exists, deleting it..."
-  rm "$script_name"
-  rm "${script_name}.*"
-fi
 
 function need() {
     n1="curl xz-utils"
