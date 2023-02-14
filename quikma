@@ -31,7 +31,9 @@ function insAcme() {
 }
 
 delete_script() {
-  echo "Script interrupted, deleting script..."
+  echo -e "
+  \033[31mScript interrupted, deleting script...\033[0m
+  "
   rm -f "$0"
   exit 1
 }
