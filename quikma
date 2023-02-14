@@ -31,7 +31,7 @@ function insAcme() {
 }
 
 cleanup() {
-  echo -e "\033[31m 無效郵箱，請重新輸入。Invalid email. Please input a valid email. \033[0m"
+  echo -e "\n\033[31m 中断Interrupted! 清理中Cleaning up... \033[0m"
   rm -f "$script_name"
   exit 1
 }
