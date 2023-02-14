@@ -30,9 +30,9 @@ function insAcme() {
    done
 }
 
-delete_script() {
-  echo -e "\033[31m Script interrupted, deleting script... \033[0m"
-  rm -f "$0"
+cleanup() {
+  echo -e "\033[31m 無效郵箱，請重新輸入。Invalid email. Please input a valid email. \033[0m"
+  rm -f "$script_name"
   exit 1
 }
 
@@ -173,7 +173,7 @@ function setRestartTrojan() {
   (echo "0 6 * * * systemctl restart trojan" ; crontab -l)| crontab 
   echo -e "\033[36m 已設置每日6點重啟trojan。Trojan has been set to restart at 6:00 every day。 \033[0m"
 }
-trap delete_script INT
+trap cleanup SIGINT
 need
 insAcme
 epEmail
@@ -195,5 +195,5 @@ echo -e "\033[36m 已完成/Finished。請根据需要修改端口與密碼/Plea
  證書位置/Certificate location ：/usr/myCert
  配置位置/Config location ：/usr/local/etc/trojan/config.json ，~/trojan_config
  本消息位置/The location of this message：/root/trojan_config.txt \033[0m" | tee trojan_config.txt
-trap - INT
+ 
 rm $0
