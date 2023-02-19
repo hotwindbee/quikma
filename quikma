@@ -177,9 +177,14 @@ function bbr() {
 }
 
 function setRestartTrojan() {
-  (echo "0 6 * * * systemctl restart trojan" ; crontab -l)| crontab 
-  echo -e "\033[36m 已設置每日6點重啟trojan。Trojan has been set to restart at 6:00 every day。 \033[0m"
+  if ! crontab -l | grep -q 'systemctl restart trojan'; then
+    (echo "0 6 * * * systemctl restart trojan" ; crontab -l)| crontab 
+    echo -e "\033[36m 已設置每日6點重啟trojan。Trojan has been set to restart at 6:00 every day。 \033[0m"
+  else
+    echo -e "\033[33m 定时已存在，无需重复设置。The schedule already exists, no need to set again. \033[0m"
+  fi
 }
+
 
 trap cleanup SIGINT
 need
