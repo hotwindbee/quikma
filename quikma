@@ -2,62 +2,76 @@
 # author:hotwindbee
 # A simple quick set trojan for self.
 # Less is More. —— Ludwig Mies van der Rohe
-# domains_args=""
-# port_use=""
-# password1=""
-# password2=""
-
-function need() {
-    n1="curl xz-utils"
-    apt update && apt install $n1 -y
-}
 
 function insAcme() {
-    local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    while true; do
-    echo "請輸入你的郵箱/Please enter Email："
-    read acmeEmail
-    if [[ $acmeEmail =~ $email_pattern ]]; then
-      echo -e "你的郵箱是/Your Email：\033[34m $acmeEmail \033[0m"
-      read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
-      if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
-        curl https://get.acme.sh | sh -s email=$acmeEmail
-        break
-      fi
-    else
-      echo -e "\033[31m 無效郵箱，請重新輸入。Invalid email. Please input a valid email. \033[0m"
-    fi
-   done
-}
-
-script_name=$(basename "$0")
-cleanup() {
-  echo -e "\n\033[31m######中断Interrupted! 清理中Cleaning up...\033[0m"
-  rm -f "$script_name"
-  exit 1
+	if [[ -f ~/.acme.sh/acme.sh ]]; then
+		echo -e "\033[33m acme已經存在，跳過安裝。acme is already installed, skipping installation. \033[0m"
+		return
+	fi
+	
+	local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+	
+	while true; do
+		echo "請輸入你的郵箱/Please enter Email："
+		read acmeEmail
+		
+		if [[ $acmeEmail =~ $email_pattern ]]; then
+			echo -e "你的郵箱是/Your Email：\033[34m $acmeEmail \033[0m"
+			read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
+			
+			if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
+				curl https://get.acme.sh | sh -s email=$acmeEmail
+				break
+			fi
+		else
+			echo -e "\033[31m 無效郵箱，請重新輸入。Invalid email. Please input a valid email. \033[0m"
+		fi
+	done
 }
 
 function epEmail() {
-    local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    while true; do
-    echo "請輸入你的CloudFlare郵箱/Please enter CloudFlare Account："
-    read cfMail
-    if [[ $cfMail =~ $email_pattern ]]; then
-      echo -e "你的CF郵箱是/Your CF Account：\033[34m $cfMail \033[0m"
-      read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
-      if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
-        export CF_Email="$cfMail"
-        break
-      fi
-    else
-      echo -e "\033[31m 無效郵箱，請重新輸入。Invalid email. Please input a valid email. \033[0m"
-    fi
-   done
+	local email_pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+	
+	if [[ -f ~/.acme.sh/account.conf ]]; then
+		source ~/.acme.sh/account.conf
+	fi
+	
+	if [[ -n "$CF_Email" ]]; then
+		echo -e "\033[33m CF郵箱已存在，跳過。CF Email already exists, skipping input. \033[0m"
+		return
+	fi
+	
+	while true; do
+		echo "請輸入你的CloudFlare郵箱/Please enter CloudFlare Account："
+		read cfMail
+		
+		if [[ $cfMail =~ $email_pattern ]]; then
+			echo -e "你的CF郵箱是/Your CF Account：\033[34m $cfMail \033[0m"
+			read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
+			
+			if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
+				export CF_Email="$cfMail"
+				break
+			fi
+		else
+			echo -e "\033[31m 無效郵箱，請重新輸入。Invalid email. Please input a valid email. \033[0m"
+		fi
+	done
 }
 
 function epKey() {
-    local key_pattern="^[a-zA-Z0-9]+$"
-    while true; do
+	local key_pattern="^[a-zA-Z0-9]+$"
+	
+	if [[ -f ~/.acme.sh/account.conf ]]; then
+		source ~/.acme.sh/account.conf
+	fi
+	
+	if [[ -n "$CF_Key" ]]; then
+		echo -e "\033[33m CF密鑰已存在，跳過。CF Key already exists, skipping input. \033[0m"
+		return
+	fi
+	
+	while true; do
     echo "请輸入CloudFlare密鑰/Please enter CloudFlare Global_Key："
     read apikey
     if [[ apikey =~ $key_pattern ]]; then
