@@ -179,7 +179,7 @@ function setRestartTrojan() {
 
 script_name=$(basename "$0")
 
-cleanup() {
+function cleanup() {
   echo -e "\n\033[31m######中断Interrupted! 清理中Cleaning up...\033[0m"
   rm -f "$script_name"
   trap - SIGINT # 重置 SIGINT 信号处理程序
@@ -201,12 +201,12 @@ bbr
 ln -s /usr/local/etc/trojan/config.json ~/trojan_config
 # head -n 10 ~/trojan_config
 # echo `head -n 10 ~/trojan_config`显示命令执行结果。
-echo -e "\033[36m 已完成/Finished。請根据需要修改端口與密碼/Please modify the port and password. 
+echo -e "\033[36m 已完成/Finished。請根据需要修改配置文件/Please modify the port and password. 
  可用於trojan的域名/domain names available for trojan：
  ${domains[@]}
  trojan使用的端口/trojan use Port：$port_use
  trojan使用的密碼/trojan password：$password1 ，$password2
- 證書位置/Certificate location ：/usr/myCert
- 配置位置/Config location ：/usr/local/etc/trojan/config.json ，~/trojan_config
+ 證書安裝位置/Cert install location ：/usr/myCert
+ 配置文件位置/Config file location ：/usr/local/etc/trojan/config.json ，~/trojan_config
  本消息位置/The location of this message：/root/trojan_config.txt \033[0m" | tee trojan_config.txt
 rm $0
