@@ -74,33 +74,6 @@ function epKey() {
 }
 
 function issueCert() {
-  local domain_pattern="^([a-zA-Z0-9]+\.)+[a-zA-Z0-9]{2,}|\*\.[a-zA-Z0-9]+$"
-  while true; do
-  echo "请输入域名/Please enter domain(s)："
-  read -a domains
-    for domain in "${domains[@]}"; do
-      if ![[ domain =~ domain_pattern ]]; then
-      echo -e "\033[31m 输入的域名無效，请重新输入。The entered domain is invalid, please re-enter. \033[0m"
-      continue 2
-      fi
-    done
-  echo -e "你的域名/Your domain(s)：\033[34m ${domains[@]} \033[0m"
-  read -p "確認以繼續/Confirm to continue (Y/n)? :" confirm
-    if [[ -z $confirm ]] || [[ $confirm == "Y" ]] || [[ $confirm == "y" ]]; then
-      echo "已确认，即将申请证书。Confirmed, the certificate will be applied for soon."
-      domains_args=""
-      for domain in "${domains[@]}"; do
-      domains_args="$domains_args -d $domain"
-      done
-      /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-      /root/.acme.sh/acme.sh --issue --dns dns_cf $domains_args -k ec-256
-      break
-    fi
-  echo -e "\033[31m 请重新输入域名。Please re-enter domain(s). \033[0m"
-  done
-}
-
-function issueCert() {
   local domain_pattern="^(\*\.[a-zA-Z0-9]+|[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*\.[a-zA-Z]{2,})"
   while true; do
     echo "请输入域名/Please enter domain(s)："
