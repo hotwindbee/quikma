@@ -173,13 +173,16 @@ function setRestartTrojan() {
 }
 
 script_name=$(basename "$0")
-function cleanup() {
+
+cleanup() {
   echo -e "\n\033[31m######中断Interrupted! 清理中Cleaning up...\033[0m"
   rm -f "$script_name"
-  exit 1
+  trap - SIGINT # 重置 SIGINT 信号处理程序
+  kill -s SIGINT "$$" # 发送 SIGINT 信号给当前进程
 }
 
 trap cleanup SIGINT
+
 need
 insAcme
 epEmail
