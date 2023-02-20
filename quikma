@@ -5,7 +5,7 @@
 
 function need() {
 	local list="curl xz-utils"
-	apt install $list -y
+	apt update && apt install $list -y
 }
 
 function insAcme() {
