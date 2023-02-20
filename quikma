@@ -93,8 +93,9 @@ function issueCert() {
         echo "已确认，即将申请证书。Confirmed, the certificate will be applied for soon."
         domains_args=""
         for domain in "${domains[@]}"; do
-          domains_args="$domains_args -d $domain"
+          domains_args="${domains_args}-d $domain"'
         done
+        echo "$domains_args"
         /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         /root/.acme.sh/acme.sh --issue --dns dns_cf $domains_args -k ec-256
         break
@@ -157,7 +158,6 @@ function setRestartTrojan() {
     echo -e "\033[33m 定时已存在，无需重复设置。The schedule already exists, no need to set again. \033[0m"
   fi
 }
-
 
 trap cleanup SIGINT
 need
