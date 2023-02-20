@@ -41,7 +41,7 @@ function epEmail() {
 		source ~/.acme.sh/account.conf
 	fi
 	
-	if [[ -n "$CF_Email" ]]; then
+	if [[ -n "$SAVED_CF_Email" ]]; then
 		echo -e "\033[33m CF郵箱已存在，跳過。CF Email already exists, skipping input. \033[0m"
 		return
 	fi
@@ -71,7 +71,7 @@ function epKey() {
 		source ~/.acme.sh/account.conf
 	fi
 	
-	if [[ -n "$CF_Key" ]]; then
+	if [[ -n "$SAVED_CF_Key" ]]; then
 		echo -e "\033[33m CF密鑰已存在，跳過。CF Key already exists, skipping input. \033[0m"
 		return
 	fi
