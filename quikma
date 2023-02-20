@@ -3,6 +3,11 @@
 # A simple quick set trojan for self.
 # Less is More. —— Ludwig Mies van der Rohe
 
+function need() {
+	local list="curl xz-utils"
+	apt install $list -y
+}
+
 function insAcme() {
 	if [[ -f ~/.acme.sh/acme.sh ]]; then
 		echo -e "\033[33m acme已經存在，跳過安裝。acme is already installed, skipping installation. \033[0m"
