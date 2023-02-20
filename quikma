@@ -172,6 +172,13 @@ function setRestartTrojan() {
   fi
 }
 
+script_name=$(basename "$0")
+function cleanup() {
+  echo -e "\n\033[31m######中断Interrupted! 清理中Cleaning up...\033[0m"
+  rm -f "$script_name"
+  exit 1
+}
+
 trap cleanup SIGINT
 need
 insAcme
