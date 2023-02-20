@@ -95,7 +95,7 @@ function epKey() {
 function issueCert() {
   local domain_pattern="^(\*\.[a-zA-Z0-9]+|[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*\.[a-zA-Z]{2,})"
   while true; do
-    echo "請輸入需要申請證書的域名/Please enter domain(s) name you need to apply for the certificate："
+    echo "請輸入需要申請證書的域名/Domain(s) apply for cert："
     read -a domains
     local domains_valid=true
     for domain in "${domains[@]}"; do
